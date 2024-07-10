@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Surprise</title>
+  <script type="module" crossorigin src="/assets/index-D8O37cTQ.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BpbHaqRH.css">
+</head>
+
+<body>
+	<div id="volume-reminder">
+		<div id="volume-icon">🔊</div>
+		<p>請調高音量</p>
+	</div>
+	<audio id="happy-birthday-audio" autoplay>
+		<source src="/assets/happy-birthday-CCoM1WlH.mp3" type="audio/mpeg">
+	</audio>
+	<div id="hold-reminder">
+		<p>長按螢幕來吹蠟燭</p>
+	</div>
+	<script>
+		// 控制音量提醒的顯示和隱藏
+		window.addEventListener('load', function () {
+			const reminder = document.getElementById('volume-reminder');
+			reminder.classList.add('show');
+
+			setTimeout(function () {
+				reminder.classList.remove('show');
+				setTimeout(function () {
+					reminder.style.display = 'none';
+				}, 1000);
+			}, 3000);
+		});
+
+		const audio = document.getElementById('happy-birthday-audio');
+		const holdReminder = document.getElementById('hold-reminder');
+
+		audio.addEventListener('ended', function () {
+			holdReminder.style.display = 'flex';
+			setTimeout(function () {
+				holdReminder.classList.add('show');
+			}, 10); // 確保 display 設置生效後再添加類名
+		});
+	</script>
+</body>
+
+</html>
