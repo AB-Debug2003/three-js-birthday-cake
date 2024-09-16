@@ -192,7 +192,7 @@ function createBalloon(imageURL) {
 }
 
 
-const urls = ['/img1.jpg', '/img3.jpg', '/img6.jpg']
+const urls = ['/img7.jpg', '/img3.jpg', '/img6.jpg']
 
 // Create multiple balloons and add them to the scene
 for (let i = 0; i < 3; i++) {  // Adjust the number of balloons as needed
