@@ -5,15 +5,27 @@
   "devDependencies": {
     "vite": "^5.3.3"
   },
-  "name": "birthday-cake-three-js",
+  "name": "birthday-cake-three",
   "type": "module",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:ascodeasice/three-js-birthday-cake.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ascodeasice/three-js-birthday-cake.git"
+  },
   "author": "Leo Wang <ab0988956087@gmail.com>",
- "scripts": {
+  "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
-  }
+  },
+  "description": "nothing",
+  "keywords": [
+    "example"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ascodeasice/three-js-birthday-cake/issues"
+  },
+  "homepage": "https://github.com/ascodeasice/three-js-birthday-cake#readme"
 }

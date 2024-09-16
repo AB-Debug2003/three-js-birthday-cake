@@ -140,6 +140,103 @@ function flame() {
 	return flame;
 }
 
+const balloons = [];
+function createBalloon(imageURL) {
+    // Balloon body
+    const balloonGeometry = new THREE.SphereGeometry(0.5, 16, 16);  // Reduced segments for performance
+    const balloonMaterial = new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff });
+    const balloon = new THREE.Mesh(balloonGeometry, balloonMaterial);
+
+    // Balloon string
+    const stringGeometry = new THREE.CylinderGeometry(0.02, 0.02, 1.5, 8);  // Reduced segments
+    const stringMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+    const string = new THREE.Mesh(stringGeometry, stringMaterial);
+    string.position.y = -1.25;
+    balloon.add(string);
+
+    // Add image (hidden initially)
+    const textureLoader = new THREE.TextureLoader();
+    const imageTexture = textureLoader.load(imageURL);
+    const imageMaterial = new THREE.SpriteMaterial({ map: imageTexture });
+    const imageSprite = new THREE.Sprite(imageMaterial);
+
+    // Ensure the image is correctly scaled
+    imageSprite.scale.set(2, 2, 1);  // Adjust the scale of the image
+    imageSprite.position.set(0, 0, 0);  // Center the image where the balloon was
+    imageSprite.visible = false;  // Start hidden
+    balloon.imageSprite = imageSprite;  // Save reference to the sprite
+    scene.add(imageSprite);  // Ensure it's part of the scene to be rendered
+
+	balloon.pop = (function() {
+		let hasPopped = false;  // Flag to check if balloon has already popped
+		return function() {
+			if (hasPopped) return;  // Prevent multiple executions
+	
+			balloon.visible = false;  // Hide the balloon
+			balloon.imageSprite.visible = true;  // Show the image
+			balloon.imageSprite.position.copy(balloon.position);  // Place image where balloon was
+	
+			// Log visibility status for debugging
+	
+			// Set a timer to hide the image after 5 seconds
+			setTimeout(() => {
+				balloon.imageSprite.visible = false;
+			}, 30000);  // 5000 milliseconds = 5 seconds
+	
+			hasPopped = true;  // Set the flag to true to prevent further pops
+		};
+	})();
+	
+
+    return balloon;
+}
+
+
+const urls = ['/img1.jpg', '/img3.jpg', '/img6.jpg']
+
+// Create multiple balloons and add them to the scene
+for (let i = 0; i < 3; i++) {  // Adjust the number of balloons as needed
+    const balloon = createBalloon(urls[i]);  // Replace with your image URL
+    balloon.position.set(Math.random() * 10 - 5, Math.random() * 5, Math.random() * 10 - 5);
+    scene.add(balloon);
+    balloons.push(balloon);
+}
+
+// Animate balloons (floating upwards)
+function animateBalloons() {
+    balloons.forEach(balloon => {
+        if (balloon.position.y < 5) {
+            balloon.position.y += 0.01;  // Move the balloon upwards
+        } else {
+            balloon.pop();  // Pop the balloon if it floats too high
+        }
+    });
+}
+
+// Raycasting to pop balloons when clicked
+window.addEventListener('click', function(event) {
+    const mouse = new THREE.Vector2();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
+    
+    const intersects = raycaster.intersectObjects(balloons, true);  // 'true' ensures all child objects are included
+
+    if (intersects.length > 0) {
+        // Get the parent object (balloon) and call pop on it
+        let balloon = intersects[0].object;
+        while (balloon.parent && !balloon.pop) {
+            balloon = balloon.parent;  // Traverse up to find the parent with the 'pop' function
+        }
+
+        if (balloon.pop) {
+            balloon.pop();  // Call the pop function on the balloon
+        }
+    }
+});
+
 
 // create candle except flame
 function createCandle() {
@@ -230,15 +327,20 @@ var time = 0;
 
 render();
 function render() {
-	requestAnimationFrame(render);
-	time += clock.getDelta();
-	flameMaterials[0].uniforms.time.value = time;
-	flameMaterials[1].uniforms.time.value = time;
-	candleLight2.position.x = Math.sin(time * Math.PI) * 0.25;
-	candleLight2.position.z = Math.cos(time * Math.PI * 0.75) * 0.25;
-	candleLight2.intensity = 2 + Math.sin(time * Math.PI * 2) * Math.cos(time * Math.PI * 1.5) * 0.25;
-	controls.update();
-	renderer.render(scene, camera);
+    requestAnimationFrame(render);
+    time += clock.getDelta();
+
+    flameMaterials[0].uniforms.time.value = time;
+    flameMaterials[1].uniforms.time.value = time;
+    candleLight2.position.x = Math.sin(time * Math.PI) * 0.25;
+    candleLight2.position.z = Math.cos(time * Math.PI * 0.75) * 0.25;
+    candleLight2.intensity = 2 + Math.sin(time * Math.PI * 2) * Math.cos(time * Math.PI * 1.5) * 0.25;
+
+    // Animate balloons
+    animateBalloons();
+
+    controls.update();
+    renderer.render(scene, camera);
 }
 
 // 蛋糕主體
@@ -395,4 +497,3 @@ function extinguishCandle(candle, speed) {
 	}, 30);
 
 }
-
