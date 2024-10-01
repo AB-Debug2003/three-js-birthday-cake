@@ -42,7 +42,38 @@
 		window.addEventListener('load', function () {
 			volumeReminder.classList.add('show');
 		});
+		function startConfetti() {
+			var duration = 3 * 1000;  // Confetti runs for 15 seconds (adjust as needed)
+			var end = Date.now() + duration;
+
+			(function frame() {
+				// Generate confetti with random properties
+				confetti({
+					particleCount: 2,
+					angle: 60,
+					spread: 60,
+					origin: { x: 0 }
+				});
+				confetti({
+					particleCount: 2,
+					angle: 120,
+					spread: 60,
+					origin: { x: 1 }
+				});
+
+				// Continue confetti until the duration ends
+				if (Date.now() < end) {
+					requestAnimationFrame(frame);
+				}
+			})();
+		}
+
+		// Call the function on page load
+		window.onload = function () {
+			setInterval(startConfetti, 3000);  // Re-trigger confetti every 2 seconds
+		};
 	</script>
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 	<script type="module" src="script.js"></script>
 </body>
 
